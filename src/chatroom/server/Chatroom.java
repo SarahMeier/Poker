@@ -98,7 +98,7 @@ public class Chatroom implements Comparable<Chatroom>, Sendable, Serializable {
 	 * Save chatrooms to disk -- called by cleanup thread
 	 */
 	public static void saveChatrooms() {
-		File chatroomFile = new File("chatroom.sav");
+		File chatroomFile = new File(Server.getHome() + "chatroom.sav");
 		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(chatroomFile))) {
 			synchronized (chatrooms) {
 				out.writeInt(chatrooms.size());
@@ -118,7 +118,7 @@ public class Chatroom implements Comparable<Chatroom>, Sendable, Serializable {
 	 * are running
 	 */
 	public static void readChatrooms() {
-		File chatroomFile = new File("chatroom.sav");
+		File chatroomFile = new File(Server.getHome() + "chatroom.sav");
 		try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(chatroomFile))) {
 			int num = in.readInt();
 			for (int i = 0; i < num; i++) {

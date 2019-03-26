@@ -9,7 +9,8 @@ import java.util.logging.Logger;
 public class Server {
 	private static final Logger logger = Logger.getLogger("");
 	private static int port = -1;
-	private static boolean secure = true;
+	private static String homeDirectory = "";
+	private static boolean secure = false;
 	
 	public static void main(String[] args) {
 		logger.setLevel(Level.FINE);
@@ -18,8 +19,14 @@ public class Server {
 		Account.readAccounts();
 		
 		try {
-			// Read options: port and security
-			readOptions();
+			// If not provided on the command line: Read port and security
+			if (args.length > 0) {
+				port = Integer.parseInt(args[0]);
+				if (args.length > 1) homeDirectory = args[1];
+				if (args.length > 2) secure = args[2].equalsIgnoreCase("yes");
+			} else {
+				readOptions();
+			}
 			
 			// Start the listener
 			ListenerThread lt = new ListenerThread(port, secure);
@@ -48,9 +55,16 @@ public class Server {
 				}
 			}
 			
-			System.out.println("Enter 'yes' if the server should use SecureSockets");
+			System.out.println("Enter the home directory (leave empty for current location)");
 			String s = in.nextLine().trim();
+			if (s.length() > 0 && s.charAt(s.length()-1) != '/') s += "/";
+			homeDirectory = s;
+			
+			System.out.println("Enter 'yes' if the server should use SecureSockets");
+			s = in.nextLine().trim();
 			secure = s.equalsIgnoreCase("yes");
 		}
 	}
+	
+	public static String getHome() { return homeDirectory; }
 }
