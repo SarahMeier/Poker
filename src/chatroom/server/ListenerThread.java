@@ -14,9 +14,11 @@ import com.sun.net.ssl.internal.ssl.Provider;
 public class ListenerThread extends Thread {
 	private static Logger logger = Logger.getLogger("");
 	private final ServerSocket listener;
+	private final int port;
 
 	public ListenerThread(int port, boolean secure) throws IOException {
 		super();
+		this.port = port;
 		this.setName("ListenerThread");
 
 		if (secure) {
@@ -39,7 +41,7 @@ public class ListenerThread extends Thread {
 
 	@Override
 	public void run() {
-		logger.info("Start listener");
+		logger.info("Starting listener on port " + port);
 		while (true) {
 			try {
 				Socket socket = listener.accept();
