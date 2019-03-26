@@ -33,6 +33,10 @@ color: #FFE3BF;
 }
 #header h1 a { text-decoration: none; color: #FFE3BF; }
 #header h1 a:hover { text-decoration: none; border-bottom: 1px solid #FFE3BF; }
+#header img {
+float: right;
+padding: 15px 10px 0 0;
+}
 
 #header h2 { padding: 0 0 0 10px; margin: 0; color: #eee; font-weight: 100; font-size: 17px; }
 
