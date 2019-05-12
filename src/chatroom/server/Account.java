@@ -88,7 +88,7 @@ public class Account implements Serializable {
 	 * Save accounts to disk -- called by cleanup thread
 	 */
 	public static void saveAccounts() {
-		File accountFile = new File("accounts.sav");
+		File accountFile = new File(Server.getHome() + "accounts.sav");
 		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(accountFile))) {
 			synchronized (accounts) {
 				out.writeInt(accounts.size());
@@ -108,7 +108,7 @@ public class Account implements Serializable {
 	 * are running
 	 */
 	public static void readAccounts() {
-		File accountFile = new File("accounts.sav");
+		File accountFile = new File(Server.getHome() + "accounts.sav");
 		try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(accountFile))) {
 			int num = in.readInt();
 			for (int i = 0; i < num; i++) {
