@@ -1,1 +1,4 @@
 /bin/
+/javaModulesDemo/*/bin/
+/*.sav
+/*.cfg
