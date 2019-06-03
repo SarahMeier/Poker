@@ -144,13 +144,25 @@ public class Chatroom implements Comparable<Chatroom>, Sendable, Serializable {
 	}
 
 	/**
-	 * Send a message to every user of this chatroom who is logged on
+	 * Send a message to every user of this chatroom who is logged on. Users may
+	 * remain in a chatroom after logout or disconnection, so we remove inactive
+	 * users when we find them.
+	 * 
+	 * Note: If multiple clients are logged in with the same name, only one will
+	 * receive a message. An alternative would be to iterate through the
+	 * clients-list and match names, but this would require synchronization on the
+	 * clients list, and our I/O may be slow. One would also need to put the cleanup
+	 * of invalid usernames into the Client cleanup code, rather than doing it here.
 	 */
 	@Override // Sendable
 	public void send(Message msg) {
-		for (String username : users) {
+		Iterator<String> i = users.iterator();
+		while (i.hasNext()) {
+			String username = i.next();
 			Client user = Client.exists(username);
-			if (user != null) user.send(msg);
+			if (user == null) i.remove();
+			else // User exists
+				user.send(msg);
 		}
 		this.lastMessage = Instant.now();
 	}
@@ -176,7 +188,7 @@ public class Chatroom implements Comparable<Chatroom>, Sendable, Serializable {
 	}
 
 	public void addUser(String username) {
-		users.add(username);
+		if (!users.contains(username)) users.add(username);
 	}
 
 	public void removeUser(String username) {

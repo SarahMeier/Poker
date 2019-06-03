@@ -101,6 +101,10 @@ public class Client implements Sendable {
 					}
 				} catch (Exception e) {
 					logger.info("Client disconnected");
+				} finally {
+					// When the client is no longer reachable, remove authentication and account
+					token = null;
+					account = null;
 				}
 			}
 		};
