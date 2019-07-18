@@ -47,6 +47,7 @@ public class TrainerTask extends Task<Void> {
 	 * Clean input data in the given StringBuffer by:
 	 * - Removing any whitespace at the start or end of the file.
 	 * - Removing doubled whitespace characters
+	 * - Removing windows-style line-breaks
 	 * - Replacing fancy quotes and apostrophes with ASCII characters
 	 */
 	private void preprocessData(StringBuffer sb) {
@@ -62,7 +63,7 @@ public class TrainerTask extends Task<Void> {
 				sb.deleteCharAt(pos + 1);
 		}
 		
-		// Remove Windows-style linebreaks (delete ^M characters
+		// Remove Windows-style linebreaks (delete ^M characters)
 		for (int pos = sb.length()-1; pos >= 0; pos--) {
 			if (sb.charAt(pos) == 0x0013) sb.deleteCharAt(pos);
 		}
