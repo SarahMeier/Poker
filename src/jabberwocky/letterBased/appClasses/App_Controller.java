@@ -10,6 +10,9 @@ import jabberwocky.letterBased.ServiceLocator;
 import jabberwocky.letterBased.ServiceLocator.Mode;
 import jabberwocky.letterBased.abstractClasses.Controller;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
@@ -24,49 +27,90 @@ import javafx.stage.WindowEvent;
  */
 public class App_Controller extends Controller<App_Model, App_View> {
 	ServiceLocator serviceLocator;
+	ChangeListener<Worker.State> trainingChangeListener; // Reusable listener for training
+	private TrainerTask trainerTask = null;
 
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
-		
+
 		// register ourselves to listen for menu items
-		view.menuFileTrain.setOnAction((e) -> train() );
-		view.menuFileClear.setOnAction((e) -> clear() );
+		view.menuFileTrain.setOnAction((e) -> train());
+		view.menuFileClear.setOnAction((e) -> clear());
 
 		// register ourselves to listen for button clicks
-		view.btnGenerate.setOnAction((e) -> buttonClick() );
-		
+		view.btnGenerate.setOnAction((e) -> buttonClick());
+
 		// control wrapping of generated text
-//		view.btnGenerate.widthProperty()
-		
+		// view.btnGenerate.widthProperty()
+
 		serviceLocator = ServiceLocator.getServiceLocator();
 		serviceLocator.getLogger().info("Application controller initialized");
+		
+		trainingChangeListener = new ChangeListener<Worker.State>() {
+          @Override
+          public void changed(
+                  ObservableValue<? extends Worker.State> observable,
+                  Worker.State oldValue, Worker.State newValue) {
+              if (newValue == Worker.State.SUCCEEDED)
+                  trainingFinished();
+          }
+      };
 	}
-	
+
 	public void clear() {
 		model.clearTrainingData();
 		view.updateStatus();
 	}
-	
+
 	public void train() {
-		FileChooser fileChooser = new FileChooser();
-		File f = fileChooser.showOpenDialog(view.getStage());
-		if (f != null) {		
-			try (BufferedReader in = new BufferedReader(new FileReader(f))) {
-				StringBuffer sb = new StringBuffer();
-				String line = in.readLine();
-				while (line != null) {
-					sb.append(line);
-					sb.append("\n");
-					line = in.readLine();
+		if (trainerTask == null) {
+			FileChooser fileChooser = new FileChooser();
+			File f = fileChooser.showOpenDialog(view.getStage());
+			if (f != null) {
+				try (BufferedReader in = new BufferedReader(new FileReader(f))) {
+					StringBuffer sb = new StringBuffer();
+					String line = in.readLine();
+					while (line != null) {
+						sb.append(line);
+						sb.append("\n");
+						line = in.readLine();
+					}
+					serviceLocator.setSequenceLength((int) view.sliderNumLetters.getValue());
+					serviceLocator.setMode(getModeFromView());
+
+					trainerTask = new TrainerTask(model, sb);
+					Thread ttt = new Thread(trainerTask);
+
+					// Bind progress-bar to model's progress property
+					view.progress.progressProperty().bind(trainerTask.progressProperty());
+					 view.progress.setVisible(true);
+
+					// Set up binding for when training is finished
+					trainerTask.stateProperty().addListener(trainingChangeListener);
+
+					ttt.start();
+				} catch (Exception e) {
+					serviceLocator.getLogger().severe(e.toString());
 				}
-				int numChars = (int) view.sliderNumLetters.getValue();
-				serviceLocator.setMode(view.rdoChar.isSelected() ? Mode.CharacterMode : Mode.WordMode);
-				model.train(numChars, sb.toString());
-				view.updateStatus();
-			} catch (Exception e) {
-				serviceLocator.getLogger().severe(e.toString());
-			}			
+			}
 		}
+	}
+	
+	public void trainingFinished() {
+		// Remove event handlers and bindings
+		view.progress.setVisible(false);
+		view.progress.progressProperty().unbind();
+		trainerTask.stateProperty().removeListener(trainingChangeListener);
+		trainerTask = null;
+		
+		view.updateStatus();
+	}
+
+	private Mode getModeFromView() {
+		if (view.rdoChar.isSelected()) return Mode.CharacterMode;
+		if (view.rdoWord.isSelected()) return Mode.WordMode1;
+		if (view.rdoWord2.isSelected()) return Mode.WordMode2;
+		return null; // Should never happen
 	}
 
 	public void buttonClick() {

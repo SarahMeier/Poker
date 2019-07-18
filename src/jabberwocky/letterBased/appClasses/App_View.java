@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -43,8 +44,10 @@ public class App_View extends View<App_Model> {
 	TextArea txtGeneratedText;
 	ScrollPane txtScroll;
 	Label lblStatus;
+	ProgressBar progress;
 	RadioButton rdoChar;
-	RadioButton rdoWord;
+	RadioButton rdoWord; // Words combined with following punctuation
+	RadioButton rdoWord2; // Words separated from following punctuation
 
 	ServiceLocator sl = ServiceLocator.getServiceLocator();
 
@@ -90,6 +93,8 @@ public class App_View extends View<App_Model> {
 		rdoChar.setSelected(true);
 		rdoWord = new RadioButton(t.getString("radio.word"));
 		rdoWord.setToggleGroup(mode);
+		rdoWord2 = new RadioButton(t.getString("radio.word2"));
+		rdoWord2.setToggleGroup(mode);
 		
 		sliderNumLetters = new Slider(1, 7, 3);
 		sliderNumLetters.setShowTickLabels(true);
@@ -105,16 +110,22 @@ public class App_View extends View<App_Model> {
 		txtGeneratedText.setId("generatedText");
 		
 		btnGenerate = new Button();
-		lblStatus = new Label();
 		
-		HBox topHBox = new HBox(10, rdoChar, rdoWord, sliderNumLetters, spacer, btnGenerate);
+		HBox topHBox = new HBox(10, rdoChar, rdoWord, rdoWord2, sliderNumLetters, spacer, btnGenerate);
 		HBox.setHgrow(spacer, Priority.ALWAYS);
 		VBox topVBox = new VBox(menuBar, topHBox);
+		
+		lblStatus = new Label();
+		Region spacer2 = new Region();
+		progress = new ProgressBar();
+		progress.setVisible(false);
+		HBox bottomBox = new HBox(lblStatus, spacer2, progress);
+		HBox.setHgrow(spacer2, Priority.ALWAYS);
 
 		BorderPane root = new BorderPane();
 		root.setTop(topVBox);
 		root.setCenter(txtGeneratedText);
-		root.setBottom(lblStatus);
+		root.setBottom(bottomBox);
 		
 		updateTexts();
 		
@@ -134,6 +145,7 @@ public class App_View extends View<App_Model> {
 		// Other controls
 		rdoChar.setText(t.getString("radio.char"));
 		rdoWord.setText(t.getString("radio.word"));
+		rdoWord2.setText(t.getString("radio.word2"));
 		btnGenerate.setText(t.getString("button.generate"));
 		
 		// Update status bar
@@ -154,5 +166,6 @@ public class App_View extends View<App_Model> {
 		sliderNumLetters.setDisable(numEntries > 0); 
 		rdoChar.setDisable(numEntries > 0);
 		rdoWord.setDisable(numEntries > 0);
+		rdoWord2.setDisable(numEntries > 0);
 	}
 }

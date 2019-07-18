@@ -28,13 +28,14 @@ public class ServiceLocator {
     final private Locale[] locales = new Locale[] { new Locale("en"), new Locale("de") };
 
     // Modes of operation
-    public static enum Mode { CharacterMode, WordMode };
+    public static enum Mode { CharacterMode, WordMode1, WordMode2 };
     
     // Resources
     private Logger logger;
     private Configuration configuration;
     private Translator translator;
-    private Mode mode;
+    private Mode mode = null;
+    private int sequenceLength = 0;
 
     /**
      * Factory method for returning the singleton
@@ -98,5 +99,13 @@ public class ServiceLocator {
 
 	public void setMode(Mode mode) {
 		this.mode = mode;
+	}
+	
+	public int getSequenceLength() {
+		return sequenceLength;
+	}
+	
+	public void setSequenceLength(int sequenceLength) {
+		this.sequenceLength = sequenceLength;
 	}
 }
