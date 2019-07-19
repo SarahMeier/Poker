@@ -1,10 +1,10 @@
-package jabberwocky.letterBased;
+package jabberwocky.chatBot;
 
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import jabberwocky.letterBased.commonClasses.Configuration;
-import jabberwocky.letterBased.commonClasses.Translator;
+import jabberwocky.chatBot.commonClasses.Configuration;
+import jabberwocky.chatBot.commonClasses.Translator;
 
 /**
  * Copyright 2015, FHNW, Prof. Dr. Brad Richards. All rights reserved. This code
@@ -21,20 +21,16 @@ public class ServiceLocator {
     private static ServiceLocator serviceLocator; // singleton
 
     // Application-global constants
-    final private Class<?> APP_CLASS = Jabberwocky.class;
-    final private String APP_NAME = "Jabberwocky";
+    final private Class<?> APP_CLASS = ChatBot.class;
+    final private String APP_NAME = "ChatBot";
     
     // Supported locales (for translations)
     final private Locale[] locales = new Locale[] { new Locale("en"), new Locale("de") };
 
-    // Modes of operation
-    public static enum Mode { CharacterMode, WordMode1, WordMode2 };
-    
     // Resources
     private Logger logger;
     private Configuration configuration;
     private Translator translator;
-    private Mode mode = null;
     private int sequenceLength = 0;
 
     /**
@@ -92,14 +88,6 @@ public class ServiceLocator {
     public void setTranslator(Translator translator) {
         this.translator = translator;
     }
-
-	public Mode getMode() {
-		return mode;
-	}
-
-	public void setMode(Mode mode) {
-		this.mode = mode;
-	}
 	
 	public int getSequenceLength() {
 		return sequenceLength;
