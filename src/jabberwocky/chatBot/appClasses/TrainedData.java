@@ -22,7 +22,7 @@ public class TrainedData {
 		forwardSequences = new ArrayList<HashMap<String, ArrayList<HashEntry>>>();
 		initMaps(forwardSequences, sequenceLength);
 		reverseSequences = new ArrayList<HashMap<String, ArrayList<HashEntry>>>();
-		initMaps(forwardSequences, sequenceLength);
+		initMaps(reverseSequences, sequenceLength);
 		wordFrequencies = new HashMap<WordUnit, Integer>();
 	}
 	

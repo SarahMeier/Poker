@@ -44,7 +44,7 @@ public class TrainerTask extends Task<Void> {
 		
 		for (int sequenceLength = 1; sequenceLength <= serviceLocator.getSequenceLength(); sequenceLength++) {
 			HashMap<String, ArrayList<HashEntry>> forwardHashEntries = trainedData.forwardSequences.get(sequenceLength-1);
-			HashMap<String, ArrayList<HashEntry>> reverseHashEntries = trainedData.forwardSequences.get(sequenceLength-1);
+			HashMap<String, ArrayList<HashEntry>> reverseHashEntries = trainedData.reverseSequences.get(sequenceLength-1);
 			for (ArrayList<TrainingUnit> sentence : sentences) {
 				processSentence(sentence, forwardHashEntries, sequenceLength);
 				Utility.reverse(sentence);

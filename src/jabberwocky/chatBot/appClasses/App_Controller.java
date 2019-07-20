@@ -120,7 +120,7 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.txtChat.setText("");
 
 		// Parse the message
-		StringBuffer data = new StringBuffer(view.txtChat.getText());
+		StringBuffer data = new StringBuffer(msg);
 		ArrayList<TrainingUnit> sentence = Utility.parseSentence(data);
 		
 		// TODO: Train from chat message
