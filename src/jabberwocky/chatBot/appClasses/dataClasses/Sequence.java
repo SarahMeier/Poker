@@ -30,6 +30,17 @@ public class Sequence {
 		while (units.size() > limit)
 			units.remove(0);
 	}
+	
+	/**
+	 * Reverse thisa sequence in place
+	 */
+	public void reverse() {
+		for (int i = 0; i < units.size()/2; i++) {
+			TrainingUnit tmp = units.get(i);
+			units.set(i, units.get(units.size() - i - 1));
+			units.set((units.size() - i - 1), tmp);
+		}
+	}
 
 	@Override
 	public int hashCode() {

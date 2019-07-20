@@ -47,8 +47,8 @@ public class TrainerTask extends Task<Void> {
 			HashMap<String, ArrayList<HashEntry>> reverseHashEntries = trainedData.reverseSequences.get(sequenceLength-1);
 			for (ArrayList<TrainingUnit> sentence : sentences) {
 				processSentence(sentence, forwardHashEntries, sequenceLength);
-				Utility.reverse(sentence);
-				processSentence(sentence, reverseHashEntries, sequenceLength);
+				ArrayList<TrainingUnit> reversedSentence = Utility.reverse(sentence);
+				processSentence(reversedSentence, reverseHashEntries, sequenceLength);
 			}			
 			this.updateProgress(sequenceLength+3, maxProgress);
 		}
@@ -67,7 +67,7 @@ public class TrainerTask extends Task<Void> {
 		while (pos < sentence.size()) {
 			TrainingUnit tu = sentence.get(pos++);
 			trainOneUnit(hashEntries, sequence, tu);
-			sequence.addUnit(tu, serviceLocator.getSequenceLength());
+			sequence.addUnit(tu, sequenceLength);
 		}
 		trainOneUnit(hashEntries, sequence, EOF_Unit.EOF);
 	}

@@ -9,13 +9,15 @@ import jabberwocky.chatBot.appClasses.dataClasses.TrainingUnit;
 import jabberwocky.chatBot.appClasses.dataClasses.WordUnit;
 
 public class Utility {
-	public static <T> void reverse(ArrayList<T> list) {
-		for (int i = 0; i < list.size()/2; i++) {
-			int j = list.size() - i - 1;
-			T tmp = list.get(i);
-			list.set(i, list.get(j));
-			list.set(j, tmp);
+	/**
+	 * Create a copy of an ArrayList with the elements in reverse order
+	 */
+	public static <T> ArrayList<T> reverse(ArrayList<T> list) {
+		ArrayList<T> reversedList = new ArrayList<>();
+		for (int i = list.size()-1; i >= 0; i--) {
+			reversedList.add(list.get(i));
 		}
+		return reversedList;
 	}
 	
 	public static ArrayList<TrainingUnit> parseSentence(StringBuffer data) {
