@@ -19,6 +19,7 @@ public class GeneratorTask extends Task<String> {
 	private TrainedData trainedData;
 	private ServiceLocator serviceLocator;
 	private ArrayList<TrainingUnit> sentence;
+	private static final int MIN_LENGTH_INTERESTING_WORD = 5;
 
 	public GeneratorTask(App_Model model, ArrayList<TrainingUnit> sentence) {
 		super();
@@ -29,16 +30,19 @@ public class GeneratorTask extends Task<String> {
 
 	@Override
 	protected String call() throws Exception {
-		// TODO: Find least-common word in user entry
+		// TODO: Find least-common word in user entry,
+		// but ignore really short words
 		int frequency = Integer.MAX_VALUE;
 		TrainingUnit key_tu = null;
 		for (TrainingUnit tu : sentence) {
-			Integer tu_freq = trainedData.wordFrequencies.get(tu);
-			if (tu_freq != null && tu_freq < frequency) {
-				frequency = tu_freq;
-				key_tu = tu;
-			} else {
-				serviceLocator.getLogger().fine("Word '" + tu + "' not found in training data");
+			if (tu.toString().length() >= MIN_LENGTH_INTERESTING_WORD) {
+				Integer tu_freq = trainedData.wordFrequencies.get(tu);
+				if (tu_freq != null && tu_freq < frequency) {
+					frequency = tu_freq;
+					key_tu = tu;
+				} else {
+					serviceLocator.getLogger().fine("Word '" + tu + "' not found in training data");
+				}
 			}
 		}
 		

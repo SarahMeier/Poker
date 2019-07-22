@@ -130,12 +130,6 @@ public class TrainerTask extends Task<Void> {
 		while (sb.length() > 0 && sb.charAt(sb.length() - 1) <= 0x20)
 			sb.deleteCharAt(sb.length() - 1);
 
-		// Remove doubled whitespace characters
-		for (int pos = 0; pos < sb.length() - 1; pos++) {
-			while (sb.length() > 1 && sb.charAt(pos) <= 0x20 && sb.charAt(pos) == sb.charAt(pos + 1))
-				sb.deleteCharAt(pos + 1);
-		}
-		
 		// Remove Windows-style linebreaks (delete ^M characters)
 		for (int pos = sb.length()-1; pos >= 0; pos--) {
 			if (sb.charAt(pos) == 0x0013) sb.deleteCharAt(pos);
@@ -163,7 +157,7 @@ public class TrainerTask extends Task<Void> {
 			pos1 = sb.indexOf("[", pos1); // Returns -1 if not found
 		}
 		
-		// Replace fancy quotation marks and apostrophes with ASCII
+		// Replace fancy quotation marks, apostrophes, hyphens and spaces with ASCII
 		for (int pos = 0; pos < sb.length() - 1; pos++) {
 			// Apostrophes of various sorts
 			if (sb.charAt(pos) == 0x2018) sb.replace(pos, pos+1, "'");
@@ -187,7 +181,13 @@ public class TrainerTask extends Task<Void> {
 			if (sb.charAt(pos) == 0x00A0) sb.replace(pos, pos+1, " ");
 			if (sb.charAt(pos) >= 0x2002 && sb.charAt(pos) <= 0x200B) sb.replace(pos, pos+1, " ");
 			if (sb.charAt(pos) == 0x202F) sb.replace(pos, pos+1, " ");
-		}		
+		}	
+		
+		// Remove doubled whitespace characters
+		for (int pos = 0; pos < sb.length() - 1; pos++) {
+			while (sb.length() > 1 && sb.charAt(pos) <= 0x20 && sb.charAt(pos) == sb.charAt(pos + 1))
+				sb.deleteCharAt(pos + 1);
+		}	
 	}	
 	
 	/**
