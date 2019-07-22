@@ -1,7 +1,11 @@
 package jabberwocky.chatBot.appClasses.training;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import jabberwocky.chatBot.ServiceLocator;
 import jabberwocky.chatBot.appClasses.App_Model;
@@ -18,40 +22,58 @@ import javafx.concurrent.Task;
 
 public class TrainerTask extends Task<Void> {
 	private TrainedData trainedData;
-	private StringBuffer data; // The data to train on
+	private List<File> files;
 	ServiceLocator serviceLocator;
 
-	public TrainerTask(App_Model model, StringBuffer data) {
+	public TrainerTask(App_Model model, List<File> files) {
 		super();
 		serviceLocator = ServiceLocator.getServiceLocator();
 		this.trainedData = new TrainedData(serviceLocator.getSequenceLength());
 		model.setFoundationData(trainedData);
-		this.data = data;
+		this.files = files;
 		serviceLocator.getLogger().info("Trainer task created");
 	}
 	
 	@Override
 	protected Void call() throws Exception {
-		int maxProgress = 3 + serviceLocator.getSequenceLength();
-		preprocessData(data); // Remove excess whitespace
-		this.updateProgress(1, maxProgress);
+		int progressPerFile = 3 + serviceLocator.getSequenceLength();
+		int maxProgress = files.size() * progressPerFile;
 		
-		ArrayList<ArrayList<TrainingUnit>> sentences = parseSentences(data);
-		this.updateProgress(2, maxProgress);
-		
-		calculateWordFrequencies(sentences, trainedData.wordFrequencies);
-		this.updateProgress(3, maxProgress);
-		
-		for (int sequenceLength = 1; sequenceLength <= serviceLocator.getSequenceLength(); sequenceLength++) {
-			HashMap<String, ArrayList<HashEntry>> forwardHashEntries = trainedData.forwardSequences.get(sequenceLength-1);
-			HashMap<String, ArrayList<HashEntry>> reverseHashEntries = trainedData.reverseSequences.get(sequenceLength-1);
-			for (ArrayList<TrainingUnit> sentence : sentences) {
-				processSentence(sentence, forwardHashEntries, sequenceLength);
-				ArrayList<TrainingUnit> reversedSentence = Utility.reverse(sentence);
-				processSentence(reversedSentence, reverseHashEntries, sequenceLength);
-			}			
-			this.updateProgress(sequenceLength+3, maxProgress);
-		}
+		for (int fileNum = 0; fileNum < files.size(); fileNum++) {
+			File f = files.get(fileNum);
+			
+			try (BufferedReader in = new BufferedReader(new FileReader(f))) {
+				StringBuffer data = new StringBuffer();
+				String line = in.readLine();
+				while (line != null) {
+					data.append(line);
+					data.append("\n");
+					line = in.readLine();
+				}
+			
+				preprocessData(data); // Remove excess whitespace
+				this.updateProgress(fileNum * progressPerFile + 1, maxProgress);
+				
+				ArrayList<ArrayList<TrainingUnit>> sentences = parseSentences(data);
+				this.updateProgress(fileNum * progressPerFile + 2, maxProgress);
+				
+				calculateWordFrequencies(sentences, trainedData.wordFrequencies);
+				this.updateProgress(fileNum * progressPerFile + 3, maxProgress);
+				
+				for (int sequenceLength = 1; sequenceLength <= serviceLocator.getSequenceLength(); sequenceLength++) {
+					HashMap<String, ArrayList<HashEntry>> forwardHashEntries = trainedData.forwardSequences.get(sequenceLength-1);
+					HashMap<String, ArrayList<HashEntry>> reverseHashEntries = trainedData.reverseSequences.get(sequenceLength-1);
+					for (ArrayList<TrainingUnit> sentence : sentences) {
+						processSentence(sentence, forwardHashEntries, sequenceLength);
+						ArrayList<TrainingUnit> reversedSentence = Utility.reverse(sentence);
+						processSentence(reversedSentence, reverseHashEntries, sequenceLength);
+					}			
+					this.updateProgress(fileNum * progressPerFile + sequenceLength+3, maxProgress);
+				}
+			} catch (Exception e) {
+				serviceLocator.getLogger().severe(e.toString());
+			}
+		}		
 		return null;
 	}
 	
@@ -117,6 +139,28 @@ public class TrainerTask extends Task<Void> {
 		// Remove Windows-style linebreaks (delete ^M characters)
 		for (int pos = sb.length()-1; pos >= 0; pos--) {
 			if (sb.charAt(pos) == 0x0013) sb.deleteCharAt(pos);
+		}
+		
+		// Remove numbers contained in square brackets (e.g., Wikipedia reference numbers)
+		// Remove doubled whitespace characters
+		int pos1 = sb.indexOf("["); // Returns -1 if not found
+		while (pos1 > -1 && pos1 < sb.length()) {
+			int pos2 = sb.indexOf("]", pos1);
+			if (pos2 > pos1) {
+				String between = sb.substring(pos1+1, pos2);
+				try {
+					Integer.parseInt(between);
+					// If we are here, the square brackets contain a number
+					sb.delete(pos1, pos2+1);
+				} catch (NumberFormatException e) {
+					// Not a number, so do not delete. Increment pos1 past this area
+					pos1 = pos2+1;
+				}
+			} else {
+				// Unlikely, but this means there are no right-square-brackets, so quit
+				break;
+			}
+			pos1 = sb.indexOf("[", pos1); // Returns -1 if not found
 		}
 		
 		// Replace fancy quotation marks and apostrophes with ASCII

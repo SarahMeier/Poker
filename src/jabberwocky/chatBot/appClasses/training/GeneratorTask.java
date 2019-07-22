@@ -66,8 +66,15 @@ public class GeneratorTask extends Task<String> {
 		}
 		
 		// Generate forward to EOF
-		sequence.reverse();
 		sentence = Utility.reverse(sentence);
+		
+		// Rebuild sequence to be the last N words of the sentence so far
+		int seqSize = sequence.size();
+		sequence = new Sequence();
+		for (int i = sentence.size() - seqSize; i < sentence.size(); i++) {
+			sequence.addUnit(sentence.get(i), seqSize);
+		}
+		
 		while (!t.equals(EOF_Unit.EOF)) {
 			// Determine which trained-data to use: the length of the sequence so far,
 			// up to the maximum length selected by the user
@@ -80,7 +87,7 @@ public class GeneratorTask extends Task<String> {
 			sentence.add(t);
 		}
 		
-		// TODO: Prettify the output
+		// Prettify the output
 		StringBuffer sb = new StringBuffer();
 		for (int i = 1; i < sentence.size()-1; i++) {
 			sb.append(sentence.get(i));

@@ -26,6 +26,7 @@ public class Utility {
 		boolean endOfSentence = false;
 		while (!endOfSentence && data.length() > 0) {
 			TrainingUnit tu = parseTrainingUnit(data);
+			
 			if (tu.getClass() == PunctuationUnit.class) {
 				PunctuationUnit pu = (PunctuationUnit) tu;
 				endOfSentence = pu.isEndOfSentence();
@@ -42,6 +43,9 @@ public class Utility {
 	 */
 	private static TrainingUnit parseTrainingUnit(StringBuffer sb) {
 		TrainingUnit unit;
+		
+		// skip spaces (note: doubled spaces have already been deleted)
+		if (sb.charAt(0) == ' ') sb.delete(0,  1);
 		
 		if (PunctuationUnit.isPunctuation(sb.charAt(0))) {
 			// If next character is punctuation, then it is the next training unit
@@ -63,8 +67,6 @@ public class Utility {
 			if (end >= 0) { // Found word
 				unit = new WordUnit(sb.substring(0, end));
 				sb.delete(0, end);
-				// if the next character is a space, discard it
-				if (sb.charAt(0) == ' ') sb.delete(0,  1);
 			} else { // This is the last word in the StringBuffer
 				unit = new WordUnit(sb.toString());
 				sb.delete(0, sb.length());

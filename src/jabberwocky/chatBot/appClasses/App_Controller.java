@@ -1,5 +1,6 @@
 package jabberwocky.chatBot.appClasses;
 
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -74,34 +75,25 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	public void train() {
 		if (trainerTask == null) {
 			FileChooser fileChooser = new FileChooser();
-			File f = fileChooser.showOpenDialog(view.getStage());
-			if (f != null) {
-				try (BufferedReader in = new BufferedReader(new FileReader(f))) {
-					StringBuffer sb = new StringBuffer();
-					String line = in.readLine();
-					while (line != null) {
-						sb.append(line);
-						sb.append("\n");
-						line = in.readLine();
-					}
-					serviceLocator.setSequenceLength((int) view.sliderMaxSequenceLength.getValue());
-
-					trainerTask = new TrainerTask(model, sb);
-					Thread ttt = new Thread(trainerTask);
-
-					// Bind progress-bar to model's progress property
-					view.progress.progressProperty().bind(trainerTask.progressProperty());
-					view.progress.setVisible(true);
-
-					// Set up binding for when training is finished
-					trainerTask.stateProperty().addListener(trainingChangeListener);
-
-					ttt.start();
-				} catch (Exception e) {
-					serviceLocator.getLogger().severe(e.toString());
-				}
-			}
+			List<File> files = fileChooser.showOpenMultipleDialog(view.getStage());
+			if (files != null && files.size() > 0) trainOnFiles(files);
 		}
+	}
+	
+	private void trainOnFiles(List<File> files) {
+		serviceLocator.setSequenceLength((int) view.sliderMaxSequenceLength.getValue());
+
+			trainerTask = new TrainerTask(model, files);
+			Thread ttt = new Thread(trainerTask);
+
+			// Bind progress-bar to model's progress property
+			view.progress.progressProperty().bind(trainerTask.progressProperty());
+			view.progress.setVisible(true);
+
+			// Set up binding for when training is finished
+			trainerTask.stateProperty().addListener(trainingChangeListener);
+
+			ttt.start();
 	}
 	
 	public void trainingFinished() {
@@ -159,7 +151,8 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	
 	private void appendChatMessage(String who, String message) {
 		String oldContent = view.txtChatHistory.getText();
-		String newContent = oldContent + "\n" + who + ": " + message;
+		String newContent = oldContent + "\n\n" + who + ": " + message;
 		view.txtChatHistory.setText(newContent);
+		view.txtScroll.setVvalue(view.txtScroll.getVmax());
 	}
 }

@@ -9,11 +9,15 @@ import java.util.ArrayList;
  * hashcode method must account for the entire contents of the sequence, i.e.,
  * all TrainingUnits.
  */
-public class Sequence {
-	ArrayList<TrainingUnit> units = new ArrayList<>();
+public class Sequence extends ArrayList<TrainingUnit> {
+	
+	public Sequence() {
+		super();
+	}
 
 	public Sequence(TrainingUnit unit) {
-		units.add(unit);
+		super();
+		this.add(unit);
 	}
 	
 	/**
@@ -26,19 +30,19 @@ public class Sequence {
 	 *            The total number of units allowed in the sequence
 	 */
 	public void addUnit(TrainingUnit unit, int limit) {
-		units.add(unit);
-		while (units.size() > limit)
-			units.remove(0);
+		this.add(unit);
+		while (this.size() > limit)
+			this.remove(0);
 	}
 	
 	/**
-	 * Reverse thisa sequence in place
+	 * Reverse this sequence in place
 	 */
 	public void reverse() {
-		for (int i = 0; i < units.size()/2; i++) {
-			TrainingUnit tmp = units.get(i);
-			units.set(i, units.get(units.size() - i - 1));
-			units.set((units.size() - i - 1), tmp);
+		for (int i = 0; i < this.size()/2; i++) {
+			TrainingUnit tmp = this.get(i);
+			this.set(i, this.get(this.size() - i - 1));
+			this.set((this.size() - i - 1), tmp);
 		}
 	}
 
@@ -65,7 +69,7 @@ public class Sequence {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		for (TrainingUnit unit : units)
+		for (TrainingUnit unit : this)
 			sb.append(unit.toString());
 		return sb.toString();
 	}

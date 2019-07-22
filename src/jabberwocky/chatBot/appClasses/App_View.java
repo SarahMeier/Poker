@@ -15,12 +15,14 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 /**
@@ -92,6 +94,11 @@ public class App_View extends View<App_Model> {
 		
 		txtChatHistory = new Text();
 		txtChatHistory.setId("generatedText");
+		txtChatHistory.setWrappingWidth(770);
+		txtChatHistory.setTextAlignment(TextAlignment.LEFT);
+		txtScroll = new ScrollPane(txtChatHistory);
+		txtScroll.setHbarPolicy(ScrollBarPolicy.NEVER);
+		txtScroll.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		
 		HBox topHBox = new HBox(10, sliderMaxSequenceLength, spacer);
 		HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -112,7 +119,7 @@ public class App_View extends View<App_Model> {
 
 		BorderPane root = new BorderPane();
 		root.setTop(topVBox);
-		root.setCenter(txtChatHistory);
+		root.setCenter(txtScroll);
 		root.setBottom(bottomVBox);
 		
 		updateTexts();
