@@ -86,11 +86,16 @@ public class Chatroom implements Comparable<Chatroom>, Sendable, Serializable {
 	 */
 	public static void cleanupChatrooms() {
 		synchronized (chatrooms) {
+			logger.fine("Cleanup chatrooms: " + chatrooms.size() + " clients registered");
 			Instant expiry = Instant.now().minusSeconds(3 * 86400); // 3 days
 			for (Iterator<Chatroom> i = chatrooms.iterator(); i.hasNext();) {
 				Chatroom chatroom = i.next();
-				if (chatroom.lastMessage.isBefore(expiry)) i.remove();
+				if (chatroom.lastMessage.isBefore(expiry)) {
+					logger.fine("Cleanup chatrooms: removing chatroom " + chatroom.getName());
+					i.remove();
+				}
 			}
+			logger.fine("Cleanup chatrooms: " + chatrooms.size() + " clients registered");
 		}
 	}
 

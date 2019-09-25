@@ -18,7 +18,7 @@ public class Sequence {
 	
 	/**
 	 * Add a unit to the end of this sequence. If the total number of units exceeds
-	 * the specified limit, remove units from the from of the sequence.
+	 * the specified limit, remove units from the beginning of the sequence.
 	 * 
 	 * @param unit
 	 *            The unit to add to the sequence

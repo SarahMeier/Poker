@@ -25,6 +25,13 @@ public class CleanupThread extends Thread {
 			// Clean up chatrooms
 			Chatroom.cleanupChatrooms();
 			Chatroom.saveChatrooms();
+			
+			System.gc();
+			
+			// Log status
+			long freeMemory = Runtime.getRuntime().freeMemory();
+			freeMemory /= (1024*1024);
+			logger.info("Cleanup process complete; " + freeMemory + "MB available");
 
 			try {
 				Thread.sleep(300000); // Every 5 minutes

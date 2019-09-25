@@ -14,6 +14,7 @@ public class Server {
 	
 	public static void main(String[] args) {
 		logger.setLevel(Level.FINE);
+		logger.getHandlers()[0].setLevel(Level.FINE);
 		logger.info("Read any existing data");
 		Chatroom.readChatrooms();
 		Account.readAccounts();

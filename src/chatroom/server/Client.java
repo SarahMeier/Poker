@@ -57,10 +57,12 @@ public class Client implements Sendable {
 		synchronized (clients) {
 			Instant expiryLoggedOut = Instant.now().minusSeconds(300);
 			Instant expiryLoggedIn = Instant.now().minusSeconds(3600);
+			logger.fine("Cleanup clients: " + clients.size() + " clients registered");
 			for (Iterator<Client> i = clients.iterator(); i.hasNext();) {
 				Client client = i.next();
 				if (client.token == null && client.lastUsage.isBefore(expiryLoggedOut)
 						|| client.token != null && client.lastUsage.isBefore(expiryLoggedIn)) {
+					logger.fine("Cleanup clients: removing client " + client.getName());
 					// Close the socket, ignoring any errors, and remove the client
 					try {
 						if (client.socket != null) client.socket.close();
@@ -70,6 +72,7 @@ public class Client implements Sendable {
 					i.remove();
 				}
 			}
+			logger.fine("Cleanup clients: " + clients.size() + " clients registered");
 		}
 	}
 
