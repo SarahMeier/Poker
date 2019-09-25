@@ -77,7 +77,7 @@ public class Account implements Serializable {
 	public static void cleanupAccounts() {
 		synchronized (accounts) {
 			Instant expiry = Instant.now().minusSeconds(3 * 86400); // 3 days
-			logger.fine("Cleanup accounts: " + accounts.size() + " clients registered");
+			logger.fine("Cleanup accounts: " + accounts.size() + " accounts registered");
 			for (Iterator<Account> i = accounts.iterator(); i.hasNext();) {
 				Account account = i.next();
 				if (account.lastLogin.isBefore(expiry)) {
@@ -85,7 +85,7 @@ public class Account implements Serializable {
 					i.remove();
 				}
 			}
-			logger.fine("Cleanup accounts: " + accounts.size() + " clients registered");
+			logger.fine("Cleanup accounts: " + accounts.size() + " accounts registered");
 		}
 	}
 

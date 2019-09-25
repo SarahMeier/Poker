@@ -103,7 +103,7 @@ public class Client implements Sendable {
 						lastUsage = Instant.now();
 					}
 				} catch (Exception e) {
-					logger.info("Client disconnected");
+					logger.info("Client " + Client.this.getName() + " disconnected");
 				} finally {
 					// When the client is no longer reachable, remove authentication and account
 					token = null;
@@ -113,7 +113,7 @@ public class Client implements Sendable {
 		};
 		Thread t = new Thread(r);
 		t.start();
-		logger.info("New client created");
+		logger.info("New client created: " + this.getName());
 	}
 
 	@Override // Sendable
@@ -132,7 +132,7 @@ public class Client implements Sendable {
 			msg.send(socket);
 			lastUsage = Instant.now();
 		} catch (IOException e) {
-			logger.warning("Client unreachable; logged out");
+			logger.warning("Client " + Client.this.getName() + " unreachable; logged out");
 			this.token = null;
 			clientReachable = false;
 		}
