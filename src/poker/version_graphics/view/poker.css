@@ -8,14 +8,15 @@
 #controlArea {
     -fx-spacing: 15.0px;
     -fx-padding: 5.0px;
-    -fx-border-color: black;
+    -fx-border-color: blueviolet;
     -fx-border-width: 2.0px;
 }
 
 .player {
 	-fx-padding: 5.0px;
-    -fx-border-color: black;
+    -fx-border-color: magenta;
     -fx-border-width: 2.0px;
+    -fx-text-fill: gold;
 }
 
 .card {
@@ -23,11 +24,17 @@
 	-fx-padding: 2.0px;
     -fx-border-color: black;
     -fx-border-width: 1.0px;
-	-fx-background-color: lemonchiffon;
+	-fx-background-color: mediumpurple;
     -fx-min-width: 50;
     -fx-pref-width: 111;
     -fx-max-width: 500;
     -fx-min-height: 80;
     -fx-pref-height: 162;
     -fx-max-height: 800;
+}
+
+.button {
+	-fx-background-color: mediumpurple;
+	-fx-text-fill: orchid;
+	
 }

@@ -1,6 +1,9 @@
 package poker.version_graphics.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 public enum HandType {
     HighCard, OnePair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush;
@@ -54,32 +57,113 @@ public enum HandType {
     }
     
     public static boolean isThreeOfAKind(ArrayList<Card> cards) {
-        // TODO        
-        return false;
+    
+       boolean found = false;
+        for (int i = 0; i < cards.size() - 1 && !found; i++) {
+            for (int j = i + 1; j < cards.size() && !found; j++) {
+            	for(int k = j + 1; k < cards.size() && !found; k++){
+                	if (cards.get(i).getRank() == cards.get(j).getRank() && cards.get(j).getRank() == cards.get(k).getRank()) 
+                	found = true;
+            	}
+        	}
+        }
+        return found; 
+    	
+    	
     }
     
     public static boolean isStraight(ArrayList<Card> cards) {
-        // TODO        
-        return false;
+    	boolean found = false;
+    	
+    	/* Ansatz über ArrayList:
+    	 * ArrayList<Card> clonedCards = (ArrayList<Card>) cards.clone();
+    	 * Collections.sort(clonedCards);
+    	 * */
+    	 
+    	
+    	int [] cardRanks = new int [cards.size()];
+    	
+    	for (int i = 0; i < cards.size(); i++) {    		
+    		cardRanks[i] = cards.get(i).getRank().ordinal();		
+    	}
+    	Arrays.sort(cardRanks);
+    	
+    	if (   cardRanks[0] == cardRanks[1] -1
+    		&& cardRanks[0] == cardRanks[2] -2
+    		&& cardRanks[0] == cardRanks[3] -3
+    		&& cardRanks[0] == cardRanks[4] -4) {
+    			found = true;
+    	}
+    	
+    	if (!found && cardRanks[0] == 0 && cardRanks[1] == 1 && cardRanks[2] == 2 && cardRanks[3] == 3 && cardRanks[4] == 12 ) {
+    			found = true;
+    	}  	
+    	
+         return found;
+  
     }
     
     public static boolean isFlush(ArrayList<Card> cards) {
-        // TODO        
-        return false;
+    	
+    	boolean found = false;
+        
+    	int [] cardSuit = new int [cards.size()];
+    	
+    	for (int i = 0; i < cards.size(); i++) {    		
+    		cardSuit[i] = cards.get(i).getSuit().ordinal();	
+    		
+    		if (   cardSuit[0] == cardSuit[1]
+    			&& cardSuit[0] == cardSuit[2]
+    			&& cardSuit[0] == cardSuit[3]
+    			&& cardSuit[0] == cardSuit[4])
+    			found = true;
+    	}
+        return found;
     }
     
     public static boolean isFullHouse(ArrayList<Card> cards) {
-        // TODO        
-        return false;
+        boolean found = false; 
+        int [] cardRanks = new int [cards.size()];        
+        
+        if(isOnePair(cards) && isThreeOfAKind(cards)) {
+        	for (int i = 0; i < cards.size(); i++) {
+        		cardRanks[i] = cards.get(i).getRank().ordinal();
+        		Arrays.sort(cardRanks);
+        		if (cardRanks[0] != cardRanks[cards.size()]) {       	
+        			found = true;
+        		}
+        	}
+        }
+        return found;
+        
     }
     
     public static boolean isFourOfAKind(ArrayList<Card> cards) {
-        // TODO        
-        return false;
+             
+    	 boolean found = false;
+         for (int i = 0; i < cards.size() -1 && !found; i++) {
+             for (int j = i+1; j < cards.size() -1 && !found; j++) {
+             	for(int k = j+1; k < cards.size() -1 && !found; k++){
+             		for(int l = k+1; l < cards.size() -1 && !found; l++){
+                 	if (cards.get(i).getRank() == cards.get(j).getRank() 
+                 		&& cards.get(i).getRank() == cards.get(k).getRank()
+                 		&& cards.get(i).getRank() == cards.get(l).getRank())
+                 		found = true;
+             		}
+             	}
+         	}
+         }
+         return found;
     }
     
     public static boolean isStraightFlush(ArrayList<Card> cards) {
-        // TODO        
-        return false;
+    	
+    	boolean found = false;
+        
+    	if (isStraight(cards) == true && isFlush(cards) == true)
+    		
+    		found = true;
+    	
+        return found;
     }
 }
