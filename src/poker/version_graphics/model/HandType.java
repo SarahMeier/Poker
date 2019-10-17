@@ -125,14 +125,22 @@ public enum HandType {
         boolean found = false; 
         int [] cardRanks = new int [cards.size()];        
         
-        if(isOnePair(cards) && isThreeOfAKind(cards)) {
+        if(isThreeOfAKind(cards)) {
         	for (int i = 0; i < cards.size(); i++) {
-        		cardRanks[i] = cards.get(i).getRank().ordinal();
-        		Arrays.sort(cardRanks);
-        		if (cardRanks[0] != cardRanks[cards.size()]) {       	
-        			found = true;
-        		}
+        		cardRanks[i] = cards.get(i).getRank().ordinal();     		
         	}
+        	Arrays.sort(cardRanks);
+        	if (cardRanks[0] == cardRanks[1] && cardRanks[0] == cardRanks[2]) {       	
+    			if(cardRanks[3] == cardRanks[4]) {
+    				found = true;
+    			} 
+    		} else {
+    			if (cardRanks[0] == cardRanks[1]) {
+    				found = true;
+    			}
+    		}
+        	
+        	
         }
         return found;
         
@@ -160,10 +168,33 @@ public enum HandType {
     	
     	boolean found = false;
         
-    	if (isStraight(cards) == true && isFlush(cards) == true)
+    	if (isStraight(cards) && isFlush(cards)) {
     		
     		found = true;
+    	}
     	
         return found;
     }
+    
+    public static boolean isRoyalFlush(ArrayList<Card> cards) {
+    	
+    	boolean found = false;
+    	int [] cardRanks = new int [cards.size()];   
+        
+    	if (isStraightFlush(cards)) {
+    		
+    		for (int i = 0; i < cards.size(); i++) {
+        		cardRanks[i] = cards.get(i).getRank().ordinal();     		
+        	}
+        	Arrays.sort(cardRanks);
+        	
+        	if (cardRanks[3] == 11 && cardRanks[4] == 12) {
+        		found = true;
+        	}
+    		
+    	}
+    	
+        return found;
+    }
+    
 }

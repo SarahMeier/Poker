@@ -72,8 +72,15 @@ public class HandTypeTest {
 	private static String [][] straightFlush = {
 			{ "2S", "3S", "4S", "5S", "6S" },
 			{ "AC", "2C", "3C", "4C", "5C" },
-			{ "TH", "JH", "QH", "KH", "AH" },
+			{ "9H", "TH", "JH", "QH", "KH" },
 			{ "5D", "6D", "7D", "8D", "9D" }
+	};
+	
+	private static String [][] royalFlush = {
+			{ "TS", "JS", "QS", "KS", "AS" },
+			{ "TC", "JC", "KC", "QC", "AC" },
+			{ "AH", "JH", "QH", "KH", "TH" },
+			{ "AD", "KD", "QD", "JD", "TD" }
 	};
 	
 	// This is where we store the translated hands
@@ -86,6 +93,7 @@ public class HandTypeTest {
 	ArrayList<ArrayList<Card>> flushHands;
 	ArrayList<ArrayList<Card>> fullHouseHands;
 	ArrayList<ArrayList<Card>> straightFlushHands;
+	ArrayList<ArrayList<Card>> royalFlushHands;
 	
 	
 	/**
@@ -104,6 +112,7 @@ public class HandTypeTest {
 		flushHands = makeHands(flush);
 		fullHouseHands = makeHands(fullHouse);
 		straightFlushHands = makeHands(straightFlush);
+		royalFlushHands = makeHands(royalFlush);
 		
 	}
 
@@ -176,6 +185,9 @@ public class HandTypeTest {
 		for (ArrayList<Card> hand : straightFlushHands) {
 			assertFalse(HandType.isTwoPair(hand));	
 		}
+		for (ArrayList<Card> hand : royalFlushHands) {
+			assertFalse(HandType.isTwoPair(hand));	
+		}
 	}
 	
 	@Test
@@ -205,6 +217,9 @@ public class HandTypeTest {
 			assertTrue(HandType.isThreeOfAKind(hand));	
 		}
 		for (ArrayList<Card> hand : straightFlushHands) {
+			assertFalse(HandType.isThreeOfAKind(hand));	
+		}
+		for (ArrayList<Card> hand : royalFlushHands) {
 			assertFalse(HandType.isThreeOfAKind(hand));	
 		}
 	}
@@ -238,6 +253,9 @@ public class HandTypeTest {
 		for (ArrayList<Card> hand : straightFlushHands) {
 			assertFalse(HandType.isFourOfAKind(hand));	
 		}
+		for (ArrayList<Card> hand : royalFlushHands) {
+			assertFalse(HandType.isFourOfAKind(hand));	
+		}
 	}
 	
 	@Test
@@ -267,6 +285,9 @@ public class HandTypeTest {
 			assertFalse(HandType.isStraight(hand));	
 		}
 		for (ArrayList<Card> hand : straightFlushHands) {
+			assertTrue(HandType.isStraight(hand));	
+		}
+		for (ArrayList<Card> hand : royalFlushHands) {
 			assertTrue(HandType.isStraight(hand));	
 		}
 	}
@@ -300,6 +321,9 @@ public class HandTypeTest {
 		for (ArrayList<Card> hand : straightFlushHands) {
 			assertTrue(HandType.isFlush(hand));	
 		}
+		for (ArrayList<Card> hand : royalFlushHands) {
+			assertTrue(HandType.isFlush(hand));	
+		}
 	}
 	
 	@Test
@@ -308,13 +332,13 @@ public class HandTypeTest {
 			assertFalse(HandType.isFullHouse(hand));
 		}
 		for (ArrayList<Card> hand : pairHands) {
-			assertTrue(HandType.isFullHouse(hand));
+			assertFalse(HandType.isFullHouse(hand));
 		}
 		for (ArrayList<Card> hand : twoPairHands) {
-			assertTrue(HandType.isFullHouse(hand));
+			assertFalse(HandType.isFullHouse(hand));
 		}
 		for (ArrayList<Card> hand : threeOfAKindHands) {
-			assertTrue(HandType.isFullHouse(hand));
+			assertFalse(HandType.isFullHouse(hand));
 		}
 		for (ArrayList<Card> hand : fourOfAKindHands) {
 			assertFalse(HandType.isFullHouse(hand));	
@@ -329,6 +353,9 @@ public class HandTypeTest {
 			assertTrue(HandType.isFullHouse(hand));	
 		}
 		for (ArrayList<Card> hand : straightFlushHands) {
+			assertFalse(HandType.isFullHouse(hand));	
+		}
+		for (ArrayList<Card> hand : royalFlushHands) {
 			assertFalse(HandType.isFullHouse(hand));	
 		}
 	}
@@ -351,16 +378,53 @@ public class HandTypeTest {
 			assertFalse(HandType.isStraightFlush(hand));	
 		}
 		for (ArrayList<Card> hand : straightHands) {
-			assertTrue(HandType.isStraightFlush(hand));	
+			assertFalse(HandType.isStraightFlush(hand));	
 		}
 		for (ArrayList<Card> hand : flushHands) {
-			assertTrue(HandType.isStraightFlush(hand));	
+			assertFalse(HandType.isStraightFlush(hand));	
 		}
 		for (ArrayList<Card> hand : fullHouseHands) {
 			assertFalse(HandType.isStraightFlush(hand));	
 		}
 		for (ArrayList<Card> hand : straightFlushHands) {
 			assertTrue(HandType.isStraightFlush(hand));	
+		}
+		for (ArrayList<Card> hand : royalFlushHands) {
+			assertTrue(HandType.isStraightFlush(hand));	
+		}
+	}
+	
+	@Test
+	public void testRoyalFlush() {
+		for (ArrayList<Card> hand : highCardHands) {
+			assertFalse(HandType.isRoyalFlush(hand));
+		}
+		for (ArrayList<Card> hand : pairHands) {
+			assertFalse(HandType.isRoyalFlush(hand));
+		}
+		for (ArrayList<Card> hand : twoPairHands) {
+			assertFalse(HandType.isRoyalFlush(hand));
+		}
+		for (ArrayList<Card> hand : threeOfAKindHands) {
+			assertFalse(HandType.isRoyalFlush(hand));
+		}
+		for (ArrayList<Card> hand : fourOfAKindHands) {
+			assertFalse(HandType.isRoyalFlush(hand));	
+		}
+		for (ArrayList<Card> hand : straightHands) {
+			assertFalse(HandType.isRoyalFlush(hand));	
+		}
+		for (ArrayList<Card> hand : flushHands) {
+			assertFalse(HandType.isRoyalFlush(hand));	
+		}
+		for (ArrayList<Card> hand : fullHouseHands) {
+			assertFalse(HandType.isRoyalFlush(hand));	
+		}
+		for (ArrayList<Card> hand : straightFlushHands) {
+			assertFalse(HandType.isRoyalFlush(hand));	
+		}
+		for (ArrayList<Card> hand : royalFlushHands) {
+			assertTrue(HandType.isRoyalFlush(hand));	
 		}
 	}
 	
