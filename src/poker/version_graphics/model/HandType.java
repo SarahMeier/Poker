@@ -111,13 +111,14 @@ public enum HandType {
     	
     	for (int i = 0; i < cards.size(); i++) {    		
     		cardSuit[i] = cards.get(i).getSuit().ordinal();	
-    		
+    	}
     		if (   cardSuit[0] == cardSuit[1]
     			&& cardSuit[0] == cardSuit[2]
     			&& cardSuit[0] == cardSuit[3]
-    			&& cardSuit[0] == cardSuit[4])
+    			&& cardSuit[0] == cardSuit[4]) {
     			found = true;
-    	}
+    		}
+    	
         return found;
     }
     
