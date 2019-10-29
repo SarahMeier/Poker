@@ -53,12 +53,28 @@ public class PokerGameController {
         			p.addCard(card);
         		}
         		p.evaluateHand();
+        		p.evaluateMostValuableCard();
+        		p.setIsLeader(true);
+        		for (int k = 0; k < i; k++) {
+        			evaluateLeadingHand(p, model.getPlayer(k));
+        		}
         		PlayerPane pp = view.getPlayerPane(i);
         		pp.updatePlayerDisplay();
         	}
+        	
     	} else {
             Alert alert = new Alert(AlertType.ERROR, "Not enough cards - shuffle first");
             alert.showAndWait();
     	}
+    }
+    
+    private void evaluateLeadingHand(Player p, Player o) {
+    	if(p.compareTo(o) > 0) {
+    		o.setIsLeader(false);
+    	}else {
+    		p.setIsLeader(false);
+    	}
+    	System.out.println("Leader " + p.getPlayerName() + ": " + p.getIsLeader());
+    	System.out.println("Leader " + o.getPlayerName() + ": " + o.getIsLeader());
     }
 }

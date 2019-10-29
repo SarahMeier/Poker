@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public enum HandType {
-    HighCard, OnePair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush;
+    HighCard, OnePair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush, RoyalFlush;
     
     /**
      * Determine the value of this hand. Note that this does not
@@ -15,174 +15,228 @@ public enum HandType {
     public static HandType evaluateHand(ArrayList<Card> cards) {
         HandType currentEval = HighCard;
         
-        if (isOnePair(cards)) currentEval = OnePair;
-        if (isTwoPair(cards)) currentEval = TwoPair;
-        if (isThreeOfAKind(cards)) currentEval = ThreeOfAKind;
-        if (isStraight(cards)) currentEval = Straight;
-        if (isFlush(cards)) currentEval = Flush;
-        if (isFullHouse(cards)) currentEval = FullHouse;
-        if (isFourOfAKind(cards)) currentEval = FourOfAKind;
-        if (isStraightFlush(cards)) currentEval = StraightFlush;
+        if (isOnePair(cards) != null) currentEval = OnePair;
+        if (isTwoPair(cards) != null) currentEval = TwoPair;
+        if (isThreeOfAKind(cards) != null) currentEval = ThreeOfAKind;
+        if (isStraight(cards) != null) currentEval = Straight;
+        if (isFlush(cards) != null) currentEval = Flush;
+        if (isFullHouse(cards) != null) currentEval = FullHouse;
+        if (isFourOfAKind(cards) != null) currentEval = FourOfAKind;
+        if (isStraightFlush(cards) != null) currentEval = StraightFlush;
+        if (isRoyalFlush(cards) != null) currentEval = RoyalFlush;
         
         return currentEval;
     }
     
-    public static boolean isOnePair(ArrayList<Card> cards) {
-        boolean found = false;
-        for (int i = 0; i < cards.size() - 1 && !found; i++) {
-            for (int j = i+1; j < cards.size() && !found; j++) {
-                if (cards.get(i).getRank() == cards.get(j).getRank()) found = true;
+    public static Card isOnePair(ArrayList<Card> cards) {
+        Card mvc = null;
+        for (int i = 0; i < cards.size() - 1 && mvc == null; i++) {
+            for (int j = i+1; j < cards.size() && mvc == null; j++) {
+                if (cards.get(i).getRank() == cards.get(j).getRank()){
+                	if(cards.get(i).compareTo(cards.get(j)) > 0){
+                		mvc = cards.get(i);
+                	} else {
+                		mvc = cards.get(j);
+                	}
+                }
             }
         }
-        return found;
+        
+        return mvc;
     }
     
-    public static boolean isTwoPair(ArrayList<Card> cards) {
+    public static Card isTwoPair(ArrayList<Card> cards) {
         // Clone the cards, because we will be altering the list
         ArrayList<Card> clonedCards = (ArrayList<Card>) cards.clone();
 
         // Find the first pair; if found, remove the cards from the list
-        boolean firstPairFound = false;
-        for (int i = 0; i < clonedCards.size() - 1 && !firstPairFound; i++) {
-            for (int j = i+1; j < clonedCards.size() && !firstPairFound; j++) {
+        Card mvc = null;
+        Card tempMVC = null;
+        
+        for (int i = 0; i < clonedCards.size()-1 && mvc == null; i++) {
+            for (int j = i+1; j < clonedCards.size() && mvc == null; j++) {
                 if (clonedCards.get(i).getRank() == clonedCards.get(j).getRank()) {
-                    firstPairFound = true;
+      
+                	if(tempMVC == null && clonedCards.get(i).compareTo(clonedCards.get(j)) > 0){
+                		tempMVC = clonedCards.get(i);
+                	}
+                	if(tempMVC == null && clonedCards.get(i).compareTo(clonedCards.get(j)) < 0){
+                		tempMVC = clonedCards.get(j);
+                	}            	
+                	
+                	if (clonedCards.size() < cards.size()) {
+                		
+                		if(tempMVC != null && clonedCards.get(i).compareTo(clonedCards.get(j)) > 0) {
+                			if (tempMVC.compareTo(clonedCards.get(i)) < 0) {
+                				mvc = clonedCards.get(i);
+                			} else {
+                				mvc = tempMVC;
+                			}
+                		}
+                		
+                		if(tempMVC != null && clonedCards.get(i).compareTo(clonedCards.get(j)) < 0){
+                			if (tempMVC.compareTo(clonedCards.get(j)) < 0) {
+                				mvc = clonedCards.get(j);                			
+                			} else {
+                				mvc = tempMVC;
+                			}
+                		}
+                	
+                	}
                     clonedCards.remove(j);  // Remove the later card
                     clonedCards.remove(i);  // Before the earlier one
+                    i = 0;
+                    j = 0; // Sorry for that!!!!
                 }
             }
         }
-        // If a first pair was found, see if there is a second pair
-        return firstPairFound && isOnePair(clonedCards);
+        return mvc;
     }
     
-    public static boolean isThreeOfAKind(ArrayList<Card> cards) {
+    public static Card isThreeOfAKind(ArrayList<Card> cards) {
     
-       boolean found = false;
-        for (int i = 0; i < cards.size() - 1 && !found; i++) {
-            for (int j = i + 1; j < cards.size() && !found; j++) {
-            	for(int k = j + 1; k < cards.size() && !found; k++){
-                	if (cards.get(i).getRank() == cards.get(j).getRank() && cards.get(j).getRank() == cards.get(k).getRank()) 
-                	found = true;
-            	}
+       Card mvc = null;;
+        for (int i = 0; i < cards.size() - 2 && mvc == null; i++) {
+            for (int j = i + 1; j < cards.size() && mvc == null; j++) {
+            	for(int k = j + 1; k < cards.size() && mvc == null; k++){
+                	if (cards.get(i).getRank() == cards.get(j).getRank() 
+                			&& cards.get(j).getRank() == cards.get(k).getRank()) {
+                		if(cards.get(i).compareTo(cards.get(j)) > 0 && cards.get(i).compareTo(cards.get(k)) > 0) {
+                			mvc = cards.get(i);
+                		} else {
+                			if(cards.get(j).compareTo(cards.get(k)) > 0) {
+                				mvc = cards.get(j);
+            				} else {
+                				mvc = cards.get(k);
+            				}                			
+            			}                		
+            		}
+            	}                	
         	}
-        }
-        return found; 
-    	
+    	}
+ 
+        return mvc;   	
     	
     }
     
-    public static boolean isStraight(ArrayList<Card> cards) {
-    	boolean found = false;
+    public static Card isStraight(ArrayList<Card> cards) {
+    	ArrayList<Card> clonedCards = (ArrayList<Card>) cards.clone();
     	
-    	/* Ansatz über ArrayList:
-    	 * ArrayList<Card> clonedCards = (ArrayList<Card>) cards.clone();
-    	 * Collections.sort(clonedCards);
-    	 * */
-    	 
+    	Card mvc = null;    	 
     	
-    	int [] cardRanks = new int [cards.size()];
+    	Collections.sort(clonedCards);
     	
-    	for (int i = 0; i < cards.size(); i++) {    		
-    		cardRanks[i] = cards.get(i).getRank().ordinal();		
-    	}
-    	Arrays.sort(cardRanks);
     	
-    	if (   cardRanks[0] == cardRanks[1] -1
-    		&& cardRanks[0] == cardRanks[2] -2
-    		&& cardRanks[0] == cardRanks[3] -3
-    		&& cardRanks[0] == cardRanks[4] -4) {
-    			found = true;
+    	if (   clonedCards.get(0).getRank().ordinal() == clonedCards.get(1).getRank().ordinal() -1
+    		&& clonedCards.get(0).getRank().ordinal() == clonedCards.get(2).getRank().ordinal() -2
+    		&& clonedCards.get(0).getRank().ordinal() == clonedCards.get(3).getRank().ordinal() -3
+    		&& clonedCards.get(0).getRank().ordinal() == clonedCards.get(4).getRank().ordinal() -4) {
+    			mvc = clonedCards.get(clonedCards.size()-1);
     	}
     	
-    	if (!found && cardRanks[0] == 0 && cardRanks[1] == 1 && cardRanks[2] == 2 && cardRanks[3] == 3 && cardRanks[4] == 12 ) {
-    			found = true;
+    	if (mvc == null 
+    			&& clonedCards.get(0).getRank().ordinal() == 0 
+    			&& clonedCards.get(1).getRank().ordinal() == 1 
+    			&& clonedCards.get(2).getRank().ordinal() == 2 
+    			&& clonedCards.get(3).getRank().ordinal() == 3 
+    			&& clonedCards.get(4).getRank().ordinal() == 12 ) {
+    			mvc = clonedCards.get(clonedCards.size()-2);
     	}  	
     	
-         return found;
+    	return mvc;
   
     }
     
-    public static boolean isFlush(ArrayList<Card> cards) {
+    public static Card isFlush(ArrayList<Card> cards) {
+    	ArrayList<Card> clonedCards = (ArrayList<Card>) cards.clone();
     	
-    	boolean found = false;
-        
-    	int [] cardSuit = new int [cards.size()];
+    	Card mvc = null;    	 
     	
-    	for (int i = 0; i < cards.size(); i++) {    		
-    		cardSuit[i] = cards.get(i).getSuit().ordinal();	
-    	}
-    		if (   cardSuit[0] == cardSuit[1]
-    			&& cardSuit[0] == cardSuit[2]
-    			&& cardSuit[0] == cardSuit[3]
-    			&& cardSuit[0] == cardSuit[4]) {
-    			found = true;
+    	Collections.sort(clonedCards);
+    	    	
+    	if (   	clonedCards.get(0).getSuit().ordinal() == clonedCards.get(1).getSuit().ordinal()
+    		 && clonedCards.get(0).getSuit().ordinal() == clonedCards.get(2).getSuit().ordinal()
+    		 && clonedCards.get(0).getSuit().ordinal() == clonedCards.get(3).getSuit().ordinal()
+    		 && clonedCards.get(0).getSuit().ordinal() == clonedCards.get(4).getSuit().ordinal()) {    		
+    			mvc = clonedCards.get(clonedCards.size()-1);
     		}
     	
-        return found;
+        return mvc;
     }
     
-    public static boolean isFullHouse(ArrayList<Card> cards) {
-        boolean found = false; 
+    public static Card isFullHouse(ArrayList<Card> cards) {
+        Card mvc = null; 
         int [] cardRanks = new int [cards.size()];        
         
-        if(isThreeOfAKind(cards)) {
+        if(isThreeOfAKind(cards) != null) {
         	for (int i = 0; i < cards.size(); i++) {
         		cardRanks[i] = cards.get(i).getRank().ordinal();     		
         	}
         	Arrays.sort(cardRanks);
         	if (cardRanks[0] == cardRanks[1] && cardRanks[0] == cardRanks[2]) {       	
     			if(cardRanks[3] == cardRanks[4]) {
-    				found = true;
+    				mvc = isThreeOfAKind(cards);
     			} 
     		} else {
     			if (cardRanks[0] == cardRanks[1]) {
-    				found = true;
+    				mvc = isThreeOfAKind(cards);
     			}
     		}
         	
-        	
         }
-        return found;
+        System.out.println(mvc);
+        return mvc;
         
     }
     
-    public static boolean isFourOfAKind(ArrayList<Card> cards) {
+    public static Card isFourOfAKind(ArrayList<Card> cards) {
              
-    	 boolean found = false;
-         for (int i = 0; i < cards.size() -1 && !found; i++) {
-             for (int j = i+1; j < cards.size() -1 && !found; j++) {
-             	for(int k = j+1; k < cards.size() -1 && !found; k++){
-             		for(int l = k+1; l < cards.size() -1 && !found; l++){
-                 	if (cards.get(i).getRank() == cards.get(j).getRank() 
-                 		&& cards.get(i).getRank() == cards.get(k).getRank()
-                 		&& cards.get(i).getRank() == cards.get(l).getRank())
-                 		found = true;
+    	 Card mvc = null;
+         for (int i = 0; i < cards.size() -3 && mvc == null; i++) {
+             for (int j = i+1; j < cards.size() && mvc == null; j++) {
+             	for(int k = j+1; k < cards.size() && mvc == null; k++){
+             		for(int l = k+1; l < cards.size() && mvc == null; l++){
+             			if (cards.get(i).getRank() == cards.get(j).getRank() 
+             					&& cards.get(i).getRank() == cards.get(k).getRank()
+             					&& cards.get(i).getRank() == cards.get(l).getRank()) {
+             				if(cards.get(i).compareTo(cards.get(j)) > 0) {
+             					mvc = cards.get(i);
+             				}else {
+             					mvc = cards.get(j);
+             				}
+             				if(cards.get(k).compareTo(mvc) > 0) {
+             					mvc = cards.get(k);
+             				}
+             				if(cards.get(l).compareTo(mvc) > 0) {
+             					mvc = cards.get(l);
+             				}
+         				}
              		}
              	}
          	}
          }
-         return found;
+         return mvc;
     }
     
-    public static boolean isStraightFlush(ArrayList<Card> cards) {
+    public static Card isStraightFlush(ArrayList<Card> cards) {
     	
-    	boolean found = false;
+    	ArrayList<Card> clonedCards = (ArrayList<Card>) cards.clone();
+    	
+    	Card mvc = null;
         
-    	if (isStraight(cards) && isFlush(cards)) {
+    	if (isStraight(clonedCards) != null && isFlush(clonedCards) != null) {
     		
-    		found = true;
+        	mvc = isStraight(clonedCards);
     	}
-    	
-        return found;
+        return mvc;
     }
     
-    public static boolean isRoyalFlush(ArrayList<Card> cards) {
+    public static Card isRoyalFlush(ArrayList<Card> cards) {
     	
-    	boolean found = false;
+    	Card mvc = null;
     	int [] cardRanks = new int [cards.size()];   
         
-    	if (isStraightFlush(cards)) {
+    	if (isStraightFlush(cards) != null) {
     		
     		for (int i = 0; i < cards.size(); i++) {
         		cardRanks[i] = cards.get(i).getRank().ordinal();     		
@@ -190,12 +244,17 @@ public enum HandType {
         	Arrays.sort(cardRanks);
         	
         	if (cardRanks[3] == 11 && cardRanks[4] == 12) {
-        		found = true;
+        		mvc = isStraight(cards);
         	}
     		
     	}
-    	
-        return found;
+        return mvc;
     }
+    
+    public static HandType getHandType(HandType currentEval) {
+		return currentEval;
+	}
+
+	
     
 }
