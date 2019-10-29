@@ -28,6 +28,34 @@ public enum HandType {
         return currentEval;
     }
     
+    public static Card evaluateMVC(ArrayList<Card> cards) {
+        Card currentMVC = isHighCard(cards);
+        
+        if (isOnePair(cards) != null) currentMVC = isOnePair(cards);
+        if (isTwoPair(cards) != null) currentMVC = isTwoPair(cards);
+        if (isThreeOfAKind(cards) != null) currentMVC = isThreeOfAKind(cards);
+        if (isStraight(cards) != null) currentMVC = isStraight(cards);
+        if (isFlush(cards) != null) currentMVC = isFlush(cards);
+        if (isFullHouse(cards) != null) currentMVC = isFullHouse(cards);
+        if (isFourOfAKind(cards) != null) currentMVC = isFourOfAKind(cards);
+        if (isStraightFlush(cards) != null) currentMVC = isStraightFlush(cards);
+        if (isRoyalFlush(cards) != null) currentMVC = isRoyalFlush(cards);
+        
+        return currentMVC;
+    }
+    
+    public static Card isHighCard(ArrayList<Card> cards) {
+    	ArrayList<Card> clonedCards = (ArrayList<Card>) cards.clone();
+    	
+    	Card mvc = null;
+    	
+    	Collections.sort(clonedCards);
+    	mvc = clonedCards.get(clonedCards.size()-1);
+    	
+    	return mvc;
+    	
+    }
+    
     public static Card isOnePair(ArrayList<Card> cards) {
         Card mvc = null;
         for (int i = 0; i < cards.size() - 1 && mvc == null; i++) {
@@ -184,7 +212,6 @@ public enum HandType {
     		}
         	
         }
-        System.out.println(mvc);
         return mvc;
         
     }

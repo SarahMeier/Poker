@@ -42,6 +42,7 @@ public class Player implements Comparable<Player> {
     public void discardHand() {
         cards.clear();
         handType = null;
+        mostValuableCard = null;
     }
     
     public int getNumCards() {
@@ -60,23 +61,10 @@ public class Player implements Comparable<Player> {
     }
     
     public Card evaluateMostValuableCard() {
-    	switch (handType) {
-		case HighCard:
-			mostValuableCard = cards.get(0);
-			for (int i = 1; i < cards.size(); i++) {
-				if(mostValuableCard.compareTo(cards.get(i)) < 0) {
-					mostValuableCard = cards.get(i);
-				}
-			}
-			break;
-			
-		case OnePair:
-			
-			break;
-
-		default:
-			break;
-		}
+    	
+    	 if (mostValuableCard == null && cards.size() == HAND_SIZE) {
+    		 mostValuableCard = HandType.evaluateMVC(cards);
+         }
     	
     	return mostValuableCard;
     }
@@ -86,6 +74,10 @@ public class Player implements Comparable<Player> {
      */
     @Override
     public int compareTo(Player o) {
-        return handType.compareTo(o.handType);
+    	if(handType.compareTo(o.handType) == 0) {
+    		return mostValuableCard.compareTo(o.mostValuableCard);
+    	}else {
+    		return handType.compareTo(o.handType);
+    	}
     }
 }
