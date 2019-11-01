@@ -11,7 +11,7 @@ public class ControlArea extends HBox{
     private Region spacer = new Region(); // Empty spacer
     Button btnShuffle = new Button("Shuffle");
     Button btnDeal = new Button("Deal");
-
+	
     public ControlArea() {
     	super(); // Always call super-constructor first !!
     	

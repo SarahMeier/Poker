@@ -1,6 +1,9 @@
 package poker.version_graphics.view;
 
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -12,6 +15,10 @@ public class PlayerPane extends VBox {
     private Label lblName = new Label();
     private HBox hboxCards = new HBox();
     private Label lblEvaluation = new Label("--");
+    private Label lblWinner = new Label("");
+	private PlayerNumberPane playerInGame = new PlayerNumberPane(); 
+	
+	
     
     // Link to player object
     private Player player;
@@ -21,13 +28,17 @@ public class PlayerPane extends VBox {
         this.getStyleClass().add("player"); // CSS style class
         
         // Add child nodes
-        this.getChildren().addAll(lblName, hboxCards, lblEvaluation);
+        this.getChildren().addAll(lblName, hboxCards, lblEvaluation, lblWinner, playerInGame);
         
         // Add CardLabels for the cards
         for (int i = 0; i < 5; i++) {
             Label lblCard = new CardLabel();
             hboxCards.getChildren().add(lblCard);
         }
+    }
+    
+    public boolean getIsPlayerActive() {
+    	return this.playerInGame.getIsActive();
     }
     
     public void setPlayer(Player player) {
@@ -47,6 +58,12 @@ public class PlayerPane extends VBox {
     			lblEvaluation.setText(evaluation.toString());
     		else
     			lblEvaluation.setText("--");
+    		
+    		if (player.getIsLeader()) {
+    			lblWinner.setText("Winner!");
+    		} else {
+    			lblWinner.setText("");
+    		}
     	}
     }
 }

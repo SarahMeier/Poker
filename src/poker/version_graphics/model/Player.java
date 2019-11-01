@@ -1,6 +1,7 @@
 package poker.version_graphics.model;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Player implements Comparable<Player> {
     public static final int HAND_SIZE = 5;
@@ -18,6 +19,7 @@ public class Player implements Comparable<Player> {
     public String getPlayerName() {
         return playerName;
     }
+    
     
     public boolean getIsLeader() {
     	return isLeader;
@@ -43,6 +45,7 @@ public class Player implements Comparable<Player> {
         cards.clear();
         handType = null;
         mostValuableCard = null;
+        isLeader = false;
     }
     
     public int getNumCards() {

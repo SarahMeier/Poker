@@ -1,5 +1,7 @@
 package poker.version_graphics.controller;
 
+import java.util.ArrayList;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import poker.version_graphics.PokerGame;
@@ -22,13 +24,17 @@ public class PokerGameController {
 		view.getDealButton().setOnAction( e -> deal() );
 	}
 	
+	
 
 
     /**
      * Remove all cards from players hands, and shuffle the deck
      */
     private void shuffle() {
-    	for (int i = 0; i < PokerGame.NUM_PLAYERS; i++) {
+    	/*view.setPlayerNumber();*/
+    	//model.updatePlayer();
+    	
+    	for (int i = 0; i < PokerGame.NUM_PLAYERS_MAX; i++) {
     		Player p = model.getPlayer(i);
     		p.discardHand();
     		PlayerPane pp = view.getPlayerPane(i);
@@ -42,30 +48,50 @@ public class PokerGameController {
      * Deal each player five cards, then evaluate the two hands
      */
     private void deal() {
-    	int cardsRequired = PokerGame.NUM_PLAYERS * Player.HAND_SIZE;
-    	DeckOfCards deck = model.getDeck();
-    	if (cardsRequired <= deck.getCardsRemaining()) {
-        	for (int i = 0; i < PokerGame.NUM_PLAYERS; i++) {
-        		Player p = model.getPlayer(i);
-        		p.discardHand();
-        		for (int j = 0; j < Player.HAND_SIZE; j++) {
-        			Card card = deck.dealCard();
-        			p.addCard(card);
-        		}
-        		p.evaluateHand();
-        		p.evaluateMostValuableCard();
-        		p.setIsLeader(true);
-        		for (int k = 0; k < i; k++) {
-        			evaluateLeadingHand(p, model.getPlayer(k));
-        		}
-        		PlayerPane pp = view.getPlayerPane(i);
-        		pp.updatePlayerDisplay();
-        	}
-        	
-    	} else {
-            Alert alert = new Alert(AlertType.ERROR, "Not enough cards - shuffle first");
-            alert.showAndWait();
+    	int playerActive = 0;
+    	for (int i = 0; i < PokerGame.NUM_PLAYERS_MAX; i++) {
+    		PlayerPane pp = view.getPlayerPane(i);
+    		if (pp.getIsPlayerActive()) {
+				playerActive++;
+			}
     	}
+    	if (playerActive > 1) {
+
+        	int cardsRequired = playerActive * Player.HAND_SIZE;
+        	DeckOfCards deck = model.getDeck();
+        	if (cardsRequired <= deck.getCardsRemaining()) {
+            	for (int i = 0; i < PokerGame.NUM_PLAYERS_MAX; i++) {
+            		
+        			Player p = model.getPlayer(i);
+            		p.discardHand();
+                		if (view.getPlayerPane(i).getIsPlayerActive()) {
+                		for (int j = 0; j < Player.HAND_SIZE; j++) {
+                			Card card = deck.dealCard();
+                			p.addCard(card);
+                		}
+                		p.evaluateHand();
+                		p.evaluateMostValuableCard();
+                		p.setIsLeader(true);
+                		for (int k = 0; k < i; k++) {
+                			if (view.getPlayerPane(k).getIsPlayerActive()) {
+                				evaluateLeadingHand(p, model.getPlayer(k));
+                			}
+                		}  
+					}            		     		
+            	}
+            	for (int i = 0; i < PokerGame.NUM_PLAYERS_MAX; i++) {
+            		PlayerPane pp = view.getPlayerPane(i);
+            		pp.updatePlayerDisplay();
+            	}
+            	
+        	} else {
+                Alert alert = new Alert(AlertType.ERROR, "Not enough cards - shuffle first");
+                alert.showAndWait();
+        	}
+		}else {
+			//ALert wenn keine spieler Active
+		}    	
+    	
     }
     
     private void evaluateLeadingHand(Player p, Player o) {
@@ -74,7 +100,5 @@ public class PokerGameController {
     	}else {
     		p.setIsLeader(false);
     	}
-    	System.out.println("Leader " + p.getPlayerName() + ": " + p.getIsLeader());
-    	System.out.println("Leader " + o.getPlayerName() + ": " + o.getIsLeader());
     }
 }
