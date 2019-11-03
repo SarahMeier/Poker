@@ -1,9 +1,7 @@
 package poker.version_graphics.view;
 
 
-import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
-import javafx.animation.SequentialTransition;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

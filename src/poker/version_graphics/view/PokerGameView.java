@@ -1,21 +1,10 @@
 package poker.version_graphics.view;
 
-import java.util.ArrayList;
-
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBase;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import poker.version_graphics.PokerGame;
 import poker.version_graphics.model.PokerGameModel;
@@ -39,6 +28,7 @@ public class PokerGameView {
 		players = new VBox();
 		playerArea1 = new HBox();
 		playerArea2 = new HBox();
+		playerArea2.getStyleClass().add("playerArea");
 		for (int i = 0; i < PokerGame.NUM_PLAYERS_INIT; i++) {
 			PlayerPane pp = new PlayerPane();
 			pp.setPlayer(model.getPlayer(i)); // link to player object in the logic
@@ -70,6 +60,7 @@ public class PokerGameView {
                 getClass().getResource("poker.css").toExternalForm());
         this.stage.setTitle("Poker Miniproject");
         this.stage.setScene(scene);
+        this.stage.sizeToScene();
         this.stage.show();		
 	}
 	

@@ -1,11 +1,9 @@
 package poker.version_graphics.view;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import poker.version_graphics.model.Card;
 import poker.version_graphics.model.HandType;
@@ -16,7 +14,7 @@ public class PlayerPane extends VBox {
     private HBox hboxCards = new HBox();
     private Label lblEvaluation = new Label("--");
     private Label lblWinner = new Label("");
-	private PlayerNumberPane playerInGame = new PlayerNumberPane(); 
+	private PlayAndPauseButton playerInGame = new PlayAndPauseButton(); 
 	
 	
     
@@ -35,6 +33,7 @@ public class PlayerPane extends VBox {
             Label lblCard = new CardLabel();
             hboxCards.getChildren().add(lblCard);
         }
+        lblWinner.setMinHeight(32);
     }
     
     public boolean getIsPlayerActive() {
@@ -61,8 +60,14 @@ public class PlayerPane extends VBox {
     			lblEvaluation.setText("--");
     		
     		if (player.getIsLeader()) {
+    			Image image = new Image(this.getClass().getClassLoader().getResourceAsStream("poker/images/money-bag.png"));
+    			ImageView imv = new ImageView(image);
+    			imv.setFitHeight(24);
+    			imv.setPreserveRatio(true);
+    			lblWinner.setGraphic(imv);
     			lblWinner.setText("Winner!");
     		} else {
+    			lblWinner.setGraphic(null);
     			lblWinner.setText("");
     		}
     	}

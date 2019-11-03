@@ -10,7 +10,7 @@ public class PokerGameModel {
 	
 	public PokerGameModel() {
 		for (int i = 0; i < PokerGame.NUM_PLAYERS_INIT; i++) {
-			players.add(new Player("Player " + i));
+			players.add(new Player("Player " + (i+1)));
 		}
 		
 		deck = new DeckOfCards();
@@ -23,13 +23,6 @@ public class PokerGameModel {
 	public DeckOfCards getDeck() {
 		return deck;
 	}
-	
-	/*public void updatePlayer() {
-		int playerDiff = PokerGame.NUM_PLAYERS_MAX - players.size();
-		for (int i = 0; i < playerDiff; i++) {
-			players.add(new Player("Player " + players.size() + 1 + i));
-		}
-	}*/
 	
 	public int getPlayersSize(){
 		return players.size();

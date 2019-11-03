@@ -13,6 +13,8 @@ public class ControlArea extends HBox{
     Button btnDeal = new Button("Deal");
     Button btnAddPlayer = new Button("+ add player");
     Button btnRemovePlayer = new Button ("- remove player");
+    
+    
 	
     public ControlArea() {
     	super(); // Always call super-constructor first !!

@@ -2,7 +2,6 @@ package poker.version_graphics.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 public enum HandType {

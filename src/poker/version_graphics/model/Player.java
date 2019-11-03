@@ -1,7 +1,6 @@
 package poker.version_graphics.model;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Player implements Comparable<Player> {
     public static final int HAND_SIZE = 5;

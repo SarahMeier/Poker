@@ -1,7 +1,5 @@
 package poker.version_graphics.controller;
 
-import java.util.ArrayList;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import poker.version_graphics.PokerGame;
@@ -33,9 +31,7 @@ public class PokerGameController {
      * Remove all cards from players hands, and shuffle the deck
      */
     private void shuffle() {
-    	/*view.setPlayerNumber();*/
-    	//model.updatePlayer();
-    	
+    	    	
     	for (int i = 0; i < model.getPlayersSize(); i++) {
     		Player p = model.getPlayer(i);
     		p.discardHand();
@@ -91,7 +87,6 @@ public class PokerGameController {
                 alert.showAndWait();
         	}
 		}else {
-			//Alert wenn zuwenig spieler Active
 			Alert alert = new Alert(AlertType.ERROR, "Not enough players - add player first");
 			alert.showAndWait();
 		}    	
@@ -101,10 +96,11 @@ public class PokerGameController {
     private void addPlayer() {
     	int newPlayerIndex = model.getPlayersSize() ;
     	if (newPlayerIndex < PokerGame.NUM_PLAYERS_MAX) {
-    		model.addPlayer("Player " + (newPlayerIndex));
+    		model.addPlayer("Player " + ((newPlayerIndex)+1));
         	view.addPlayerPane(newPlayerIndex);
 		}else {
-			//ALert tooo Many Players
+			Alert alert = new Alert(AlertType.ERROR, "Table is full");
+			alert.showAndWait();
 		}  	
     	
     }
@@ -115,7 +111,8 @@ public class PokerGameController {
     		view.removePlayerPane(removePlayerIndex);
         	model.removePlayer(removePlayerIndex);
 		}else {
-			//ALERT too less Players
+			Alert alert = new Alert(AlertType.ERROR, "Minimum number of players reached");
+			alert.showAndWait();
 		}
     }
     
