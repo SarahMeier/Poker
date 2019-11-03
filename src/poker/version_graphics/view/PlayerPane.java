@@ -48,11 +48,12 @@ public class PlayerPane extends VBox {
     
     public void updatePlayerDisplay() {
     	lblName.setText(player.getPlayerName());
+    	hideWinner();
     	for (int i = 0; i < Player.HAND_SIZE; i++) {
     		Card card = null;
     		if (player.getCards().size() > i) card = player.getCards().get(i);
     		CardLabel cl = (CardLabel) hboxCards.getChildren().get(i);
-    		cl.setCard(card);
+    		cl.setCard(card, this);
     		HandType evaluation = player.evaluateHand();
     		if (evaluation != null)
     			lblEvaluation.setText(evaluation.toString());
@@ -65,5 +66,14 @@ public class PlayerPane extends VBox {
     			lblWinner.setText("");
     		}
     	}
+    }
+    public void hideWinner() {
+    	lblEvaluation.setVisible(false);
+    	lblWinner.setVisible(false);
+    }
+    
+    public void showWinner() {
+    	lblEvaluation.setVisible(true);
+    	lblWinner.setVisible(true);
     }
 }

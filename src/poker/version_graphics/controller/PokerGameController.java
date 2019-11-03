@@ -22,8 +22,10 @@ public class PokerGameController {
 		
 		view.getShuffleButton().setOnAction( e -> shuffle() );
 		view.getDealButton().setOnAction( e -> deal() );
-	}
+		view.getAddPlayerButton().setOnAction(e -> addPlayer() );		
+		view.getRemovePlayerButton().setOnAction(e -> removePlayer() );
 	
+	}
 	
 
 
@@ -34,7 +36,7 @@ public class PokerGameController {
     	/*view.setPlayerNumber();*/
     	//model.updatePlayer();
     	
-    	for (int i = 0; i < PokerGame.NUM_PLAYERS_MAX; i++) {
+    	for (int i = 0; i < model.getPlayersSize(); i++) {
     		Player p = model.getPlayer(i);
     		p.discardHand();
     		PlayerPane pp = view.getPlayerPane(i);
@@ -49,7 +51,7 @@ public class PokerGameController {
      */
     private void deal() {
     	int playerActive = 0;
-    	for (int i = 0; i < PokerGame.NUM_PLAYERS_MAX; i++) {
+    	for (int i = 0; i < model.getPlayersSize(); i++) {
     		PlayerPane pp = view.getPlayerPane(i);
     		if (pp.getIsPlayerActive()) {
 				playerActive++;
@@ -60,7 +62,7 @@ public class PokerGameController {
         	int cardsRequired = playerActive * Player.HAND_SIZE;
         	DeckOfCards deck = model.getDeck();
         	if (cardsRequired <= deck.getCardsRemaining()) {
-            	for (int i = 0; i < PokerGame.NUM_PLAYERS_MAX; i++) {
+            	for (int i = 0; i < model.getPlayersSize(); i++) {
             		
         			Player p = model.getPlayer(i);
             		p.discardHand();
@@ -79,7 +81,7 @@ public class PokerGameController {
                 		}  
 					}            		     		
             	}
-            	for (int i = 0; i < PokerGame.NUM_PLAYERS_MAX; i++) {
+            	for (int i = 0; i < model.getPlayersSize(); i++) {
             		PlayerPane pp = view.getPlayerPane(i);
             		pp.updatePlayerDisplay();
             	}
@@ -89,9 +91,32 @@ public class PokerGameController {
                 alert.showAndWait();
         	}
 		}else {
-			//ALert wenn keine spieler Active
+			//Alert wenn zuwenig spieler Active
+			Alert alert = new Alert(AlertType.ERROR, "Not enough players - add player first");
+			alert.showAndWait();
 		}    	
     	
+    }
+    
+    private void addPlayer() {
+    	int newPlayerIndex = model.getPlayersSize() ;
+    	if (newPlayerIndex < PokerGame.NUM_PLAYERS_MAX) {
+    		model.addPlayer("Player " + (newPlayerIndex));
+        	view.addPlayerPane(newPlayerIndex);
+		}else {
+			//ALert tooo Many Players
+		}  	
+    	
+    }
+    
+    private void removePlayer() {
+    	int removePlayerIndex = model.getPlayersSize()-1;
+    	if (removePlayerIndex >= PokerGame.NUM_PLAYERS_MIN) {
+    		view.removePlayerPane(removePlayerIndex);
+        	model.removePlayer(removePlayerIndex);
+		}else {
+			//ALERT too less Players
+		}
     }
     
     private void evaluateLeadingHand(Player p, Player o) {

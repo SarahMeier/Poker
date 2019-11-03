@@ -2,9 +2,11 @@ package poker.version_graphics.view;
 
 import java.util.ArrayList;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -13,19 +15,23 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import poker.version_graphics.PokerGame;
 import poker.version_graphics.model.PokerGameModel;
 
 public class PokerGameView {
+	private final int PLAYERS_PER_ROW = 3;
 	private VBox players;
 	private ControlArea controls;
 	private HBox playerArea1;
 	private HBox playerArea2;
+	private Stage stage;
 	
 	private PokerGameModel model;
 	
 	public PokerGameView(Stage stage, PokerGameModel model) {
+		this.stage = stage;
 		this.model = model;
 		
 		// Create all of the player panes we need, and put them into an HBox
@@ -33,15 +39,14 @@ public class PokerGameView {
 		players = new VBox();
 		playerArea1 = new HBox();
 		playerArea2 = new HBox();
-		for (int i = 0; i < PokerGame.NUM_PLAYERS_MAX; i++) {
+		for (int i = 0; i < PokerGame.NUM_PLAYERS_INIT; i++) {
 			PlayerPane pp = new PlayerPane();
 			pp.setPlayer(model.getPlayer(i)); // link to player object in the logic
-			if(i < 2) {
+			if(i < PLAYERS_PER_ROW) {
 				playerArea1.getChildren().add(pp);
 			}else {
 				playerArea2.getChildren().add(pp);
 			}
-			//players.getChildren().add(pp);
 		}
 		players.getChildren().addAll(playerArea1, playerArea2);
 		
@@ -55,24 +60,24 @@ public class PokerGameView {
 		//root.setCenter(players);
 		root.setCenter(players);
 		root.setBottom(controls);
-		
+
 		// Disallow resizing - which is difficult to get right with images
-		stage.setResizable(false);
+		this.stage.setResizable(false);
 
         // Create the scene using our layout; then display it
         Scene scene = new Scene(root);
         scene.getStylesheets().add(
                 getClass().getResource("poker.css").toExternalForm());
-        stage.setTitle("Poker Miniproject");
-        stage.setScene(scene);
-        stage.show();		
+        this.stage.setTitle("Poker Miniproject");
+        this.stage.setScene(scene);
+        this.stage.show();		
 	}
 	
 	public PlayerPane getPlayerPane(int i) {
-		if (i < 2) {
+		if (i < PLAYERS_PER_ROW) {
 			return (PlayerPane) playerArea1.getChildren().get(i);
 		}else {
-			return (PlayerPane) playerArea2.getChildren().get(i -2);
+			return (PlayerPane) playerArea2.getChildren().get(i - PLAYERS_PER_ROW);
 		}		
 	}
 	
@@ -84,4 +89,31 @@ public class PokerGameView {
 		return controls.btnDeal;
 	}
 	
+	public Button getAddPlayerButton() {
+		return controls.btnAddPlayer;
+	}
+	
+	public Button getRemovePlayerButton() {
+		return controls.btnRemovePlayer;
+	}
+	
+	public void addPlayerPane(int playerIndex) {
+		PlayerPane pp = new PlayerPane();
+		pp.setPlayer(model.getPlayer(playerIndex)); // link to player object in the logic
+		if(playerIndex < PLAYERS_PER_ROW) {
+			playerArea1.getChildren().add(pp);
+		}else {
+			playerArea2.getChildren().add(pp);
+		}
+		stage.sizeToScene();
+	}
+
+	public void removePlayerPane(int removePlayerIndex) {
+		if(removePlayerIndex < PLAYERS_PER_ROW) {
+			playerArea1.getChildren().remove(removePlayerIndex);
+		}else {
+			playerArea2.getChildren().remove(removePlayerIndex - PLAYERS_PER_ROW);
+		}
+		stage.sizeToScene();
+	}
 }
